@@ -1,13 +1,13 @@
-const Ship = (l) => {
+const Ship = (l, name) => {
     return {
         length: l,
+        name: name,
         hits: 0,
         hit() {
             this.hits++;
         },
         hasSunk() {
-            if (this.hits === this.length) return true;
-            else return false;
+            return this.hits === this.length;
         }
     }
 }

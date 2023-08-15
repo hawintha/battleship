@@ -2,13 +2,16 @@ import { Player } from '../factories/player.js';
 
 let p1;
 let AI;
-beforeEach(() => { //Create players with 1 ship on each board
+beforeEach(() => {
     p1 = Player();
-    p1.initialize();
-    p1.board.placeShip(3, 2, false);
+    p1.initialize("Jack Sparrow");
     AI = Player();
-    AI.initialize();
-    AI.board.placeShip(4, 2, true);
+    AI.initialize("AI");
+})
+
+test('Initialize a game with 2 boards & their corresponding fleets', () => {
+    expect(p1.board.locations[0].occupied).toBeFalsy();
+    expect(AI.fleet[4].name).toBe("destroyer");
 })
 
 test('Set up boards for each player with a preset ship', () => {
@@ -17,6 +20,8 @@ test('Set up boards for each player with a preset ship', () => {
 })
 
 test('Player attacks enemy gameboard', () => {
+    const destroyer = AI.fleet[4];
+    AI.board.locations[4].occupied = destroyer;
     p1.attack(3, AI.board);
     expect(AI.board.locations[3].isShot).toBe('missed');
     p1.attack(4, AI.board);

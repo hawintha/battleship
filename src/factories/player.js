@@ -1,10 +1,29 @@
 import { Gameboard } from './gameboard.js';
+import { Ship } from './ship.js';
 
 const Player = () => {
     return {
+        name: '',
         board: Gameboard(),
-        initialize() {
+        fleet: [],
+        newFleet() {
+            const ships = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer'];
+            const shipLengths = {
+                carrier: 5,
+                battleship: 4,
+                cruiser: 3,
+                submarine: 3,
+                destroyer: 2
+            };
+            ships.forEach(ship => {
+                const newShip = Ship(shipLengths[ship], ship);
+                this.fleet.push(newShip);
+            });
+        },
+        initialize(nameInput) {
+            if (nameInput) this.name = nameInput;
             this.board.newField();
+            this.newFleet();
         },
 
         attack(x, enemyBoard) {
