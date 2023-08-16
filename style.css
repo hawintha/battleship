@@ -19,6 +19,16 @@ section {
     grid-template-columns: 1fr 12rem;
 }
 
+.battlefield {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    gap: 1rem;
+}
+
 .board {
     display: grid;
     grid-template-columns: 2rem 30.5rem;
@@ -72,9 +82,33 @@ h2 {
     justify-self: center;
 }
 
-.shipyard {
+.wharf {
     display: grid;
     text-align: center;
+}
+
+.yard {
+    display: flex;
+    width: 30rem;
+    height: 8rem;
+}
+
+.yard h3 {
+    writing-mode: vertical-rl;
+    transform: scale(-1);
+}
+
+.yard .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: space-evenly;
+    margin: 0 1rem 0 1rem;
+}
+
+.graveyard span {
+    text-align: center;
+    letter-spacing: 1px;
 }
 
 .ship-wrapper {
@@ -90,7 +124,7 @@ h2 {
     border-radius: 10px;
 }
 
-.shipyard img {
+.wharf img {
     transform: scale(0.25);
 }
 
