@@ -1,11 +1,12 @@
 import { shipyard } from './shipyard.js';
+import { battlefield } from './battlefield.js';
 
 const lobby = (() => {
     const content = document.querySelector('.content');
 
     const renderLobby = () => {
         const newSection = document.createElement('section');
-        newSection.classList.add('lobby');
+        newSection.classList.add("lobby");
         content.appendChild(newSection);
 
         const newTitle = document.createElement('h1');
@@ -15,18 +16,18 @@ const lobby = (() => {
         const newInput = document.createElement('input');
         newInput.type = 'text';
         newInput.placeholder = "Captain's Name";
-        newInput.classList.add('name-input');
+        newInput.classList.add("name-input");
         newSection.appendChild(newInput);
 
         const newBtn = document.createElement('button');
         newBtn.innerText = "Start";
-        newBtn.classList.add('startBtn');
+        newBtn.classList.add("startBtn");
         newSection.appendChild(newBtn);
     }
 
     const renderLabels = (characters) => {
         const newContainer = document.createElement('div');
-        newContainer.classList.add('labels');
+        newContainer.classList.add("labels");
         characters.forEach((char) => {
             const newLabel = document.createElement('span');
             newLabel.innerText = char;
@@ -44,7 +45,7 @@ const lobby = (() => {
     }
     const renderField = () => {
         const newContainer = document.createElement('div');
-        newContainer.classList.add('field');
+        newContainer.classList.add("field");
         for (let i = 0; i < 100; i++) {
             const newSquare = document.createElement('div');
             newSquare.dataset.index = i;
@@ -57,7 +58,7 @@ const lobby = (() => {
     }
     const renderControls = () => {
         const newContainer = document.createElement('div');
-        newContainer.classList.add('controls');
+        newContainer.classList.add("controls");
         const btns = ['Reset', 'Randomize', 'Confirm', 'Horizontal', 'Vertical'];
         btns.forEach(btn => {
             const newBtn = document.createElement('button');
@@ -67,11 +68,11 @@ const lobby = (() => {
         });
         return newContainer;
     }
-    const renderBoard = () => {
+    const renderBoard = (heading) => {
         const newBoard = document.createElement('div');
-        newBoard.classList.add('board');
+        newBoard.classList.add("board");
         const newHeading = document.createElement('h2');
-        newHeading.innerText = "My Fleet";
+        newHeading.innerText = heading;
         newBoard.appendChild(newHeading);
 
         const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
@@ -79,25 +80,30 @@ const lobby = (() => {
         newBoard.appendChild(renderLabels(letters));
         newBoard.appendChild(renderLabels(numbers));
         newBoard.appendChild(renderField());
-        newBoard.appendChild(renderControls());
         return newBoard;
     }
-    const renderSetup = () => {
+    const renderSetup = (p1) => {
         const newSection = document.createElement('section');
-        newSection.classList.add('setup');
+        newSection.classList.add("setup");
         content.appendChild(newSection);
-        newSection.appendChild(renderBoard());
-        newSection.appendChild(shipyard.renderShips());
+        newSection.appendChild(renderBoard("My Fleet"));
+        document.querySelector('.board').appendChild(renderControls());
+
+        newSection.appendChild(shipyard.renderWharf(p1.fleet));
     }
 
-    const addListeners = (player) => {
+    const addListeners = (game) => { //game vs p1/p2
         const randomizeBtn = document.querySelector('.randomize');
         randomizeBtn.addEventListener('click', () => {
-            player.fleet.forEach(ship => {
-                player.board.autoPlace(ship);
+            game.p1.fleet.forEach(ship => {
+                game.p1.board.autoPlace(ship);
             })
         });
+        const confirmBtn = document.querySelector('.confirm');
+        confirmBtn.addEventListener('click', () => {
+            battlefield.renderBattlefield(game);
+        });
     }
-    return { renderLobby, renderSetup, addListeners }
+    return { renderLobby, renderBoard, renderSetup, addListeners }
 })();
 export { lobby };

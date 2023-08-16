@@ -1,26 +1,24 @@
 const shipyard = (() => {
-    const ships = ['Carrier', 'Battleship', 'Cruiser', 'Submarine', 'Destroyer'];
-
-    const renderShips = () => {
+    const renderWharf = (fleet) => {
         const newContainer = document.createElement('div');
-        newContainer.classList.add('shipyard');
+        newContainer.classList.add("wharf");
 
-        const newLabel = document.createElement('span');
-        newLabel.innerText = "SHIPYARD";
+        const newLabel = document.createElement('h3');
+        newLabel.innerText = "Wharf";
         newContainer.appendChild(newLabel);
 
-        ships.forEach(ship => {
+        fleet.forEach(ship => {
             const newCard = document.createElement('div');
-            newCard.classList.add('ship-wrapper');
+            newCard.classList.add("ship-wrapper");
 
             const newImg = document.createElement('img');
-            newImg.setAttribute('src', `../src/assets/${ship.toLowerCase()}.svg`);
-            newImg.classList.add(ship.toLowerCase());
+            newImg.setAttribute('src', `../src/assets/${ship.name}.svg`);
+            newImg.classList.add(ship.name);
             newCard.appendChild(newImg);
 
             const newLabel = document.createElement('span');
             newCard.appendChild(newLabel);
-            newLabel.innerText = ship;
+            newLabel.innerText = ship.name;
             newContainer.appendChild(newCard);
         });
         return newContainer;
@@ -42,13 +40,11 @@ const shipyard = (() => {
             img.style.margin = '0 0 0 -18px';
         }
     }
-    const placeShip = (x, isVertical, ship) => {
+    const positionImg = (shipImg, x, isVertical, ship) => {
         const field = document.querySelector('.field');
-        const shipImg = document.querySelector(`.${ship.name}`);
-        const shipLabel = shipImg.nextElementSibling;
-        shipLabel.remove();
         field.insertBefore(shipImg, field.children.item(x));
         let columnStart = calcColumn(x) + 1;
+        shipImg.removeAttribute('style');
         if (isVertical) {
             shipImg.style.transform = 'rotate(90deg)';
             shipImg.style.transformOrigin = 'top left';
@@ -59,6 +55,54 @@ const shipyard = (() => {
         shipImg.style.gridColumnEnd = columnStart + ship.length;
         shipImg.style.gridRow = Math.floor(x / 10) + 1;
     }
-    return { renderShips, placeShip, calcColumn }
+    const placeShip = (x, isVertical, ship) => {
+        const shipImg = document.querySelector(`.${ship.name}`);
+        const shipLabel = shipImg.nextElementSibling;
+        shipLabel.remove();
+        positionImg(shipImg, x, isVertical, ship);
+    }
+
+    const renderShipImg = (ship) => {
+        const newImg = document.createElement('img');
+        newImg.setAttribute('src', `../src/assets/${ship.name}.svg`);
+        newImg.classList.add(ship.name);
+        newImg.style.width = `${ship.length * 2.5}rem`;
+        return newImg;
+    }
+    const renderYard = (type) => {
+        const newYard = document.createElement('div');
+        newYard.classList.add(type, "yard");
+
+        const newHeading = document.createElement('h3');
+        newHeading.innerText = type.toUpperCase();
+        newYard.appendChild(newHeading);
+
+        const newContainer = document.createElement('div');
+        newContainer.classList.add('container');
+        newYard.appendChild(newContainer);
+        return newYard;
+    }
+    const renderShipyard = (fleet) => {
+        const newYard = renderYard('shipyard');
+        const container = newYard.lastElementChild;
+        fleet.forEach(ship => {
+            container.appendChild(renderShipImg(ship));
+        })
+        return newYard;
+    }
+
+    const renderGraveyard = (fleet) => {
+        const newYard = renderYard('graveyard');
+        const container = newYard.lastElementChild;
+        fleet.forEach(ship => {
+            const newSpan = document.createElement('span');
+            newSpan.innerText = ship.name[0].toUpperCase() + ship.name.slice(1) + ` (${ship.length})`;
+            newSpan.style.width = `${(ship.length * 2) + 3}rem`;
+            container.appendChild((newSpan));
+        })
+        return newYard;
+    }
+
+    return { renderWharf, positionImg, placeShip, calcColumn, renderShipImg, renderShipyard, renderGraveyard }
 })();
 export { shipyard };

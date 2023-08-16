@@ -6,8 +6,8 @@ const view = (() => {
         const game = Game();
         game.setPlayers(document.querySelector('.name-input').value);
         document.querySelector('.content').replaceChildren();
-        lobby.renderSetup();
-        lobby.addListeners(game.p1);
+        lobby.renderSetup(game.p1);
+        lobby.addListeners(game);
     }
 
     const loadLobby = () => {
