@@ -70,11 +70,10 @@ const lobby = (() => {
     }
     const renderBoard = (heading) => {
         const newBoard = document.createElement('div');
-        newBoard.classList.add("board");
+        newBoard.classList.add("board", heading.substring(0, heading.length - 7).toLowerCase());
         const newHeading = document.createElement('h2');
         newHeading.innerText = heading;
         newBoard.appendChild(newHeading);
-
         const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
         const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         newBoard.appendChild(renderLabels(letters));
@@ -88,18 +87,23 @@ const lobby = (() => {
         content.appendChild(newSection);
         newSection.appendChild(renderBoard("My Fleet"));
         document.querySelector('.board').appendChild(renderControls());
+        document.querySelector('.confirm').disabled = true;
 
         newSection.appendChild(shipyard.renderWharf(p1.fleet));
     }
 
-    const addListeners = (game) => { //game vs p1/p2
+    const addListeners = (game) => {
         const randomizeBtn = document.querySelector('.randomize');
+        const confirmBtn = document.querySelector('.confirm');
         randomizeBtn.addEventListener('click', () => {
             game.p1.fleet.forEach(ship => {
-                game.p1.board.autoPlace(ship);
+                game.p1.board.autoPlace(ship, false);
             })
+            game.p2.fleet.forEach(ship => { //Auto place AI ships, but not on DOM
+                game.p2.board.autoPlace(ship, true);
+            })
+            confirmBtn.disabled = false;
         });
-        const confirmBtn = document.querySelector('.confirm');
         confirmBtn.addEventListener('click', () => {
             battlefield.renderBattlefield(game);
         });

@@ -16,7 +16,7 @@ const Player = () => {
                 destroyer: 2
             };
             ships.forEach(ship => {
-                const newShip = Ship(shipLengths[ship], ship);
+                const newShip = Ship(shipLengths[ship], ship, false);
                 this.fleet.push(newShip);
             });
         },
@@ -27,15 +27,16 @@ const Player = () => {
         },
 
         attack(x, enemyBoard) {
-            enemyBoard.receiveAttack(x);
+            return enemyBoard.receiveAttack(x);
         },
         autoAttack(enemyBoard) {
             let RNG = Math.floor(Math.random() * 100);
             if (enemyBoard.locations[RNG].isShot === false) {
                 enemyBoard.receiveAttack(RNG);
             } else {
-                this.autoAttack(enemyBoard);
+                return this.autoAttack(enemyBoard); //Get different RNG
             }
+            return RNG;
         },
     }
 }

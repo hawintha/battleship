@@ -40,12 +40,11 @@ const shipyard = (() => {
             img.style.margin = '0 0 0 -18px';
         }
     }
-    const positionImg = (shipImg, x, isVertical, ship) => {
-        const field = document.querySelector('.field');
-        field.insertBefore(shipImg, field.children.item(x));
-        let columnStart = calcColumn(x) + 1;
+    const positionImg = (shipImg, ship, field) => {
+        field.appendChild(shipImg);
+        let columnStart = calcColumn(ship.head) + 1;
         shipImg.removeAttribute('style');
-        if (isVertical) {
+        if (ship.isVertical) {
             shipImg.style.transform = 'rotate(90deg)';
             shipImg.style.transformOrigin = 'top left';
             columnStart += 1;
@@ -53,13 +52,13 @@ const shipyard = (() => {
         }
         shipImg.style.gridColumnStart = columnStart;
         shipImg.style.gridColumnEnd = columnStart + ship.length;
-        shipImg.style.gridRow = Math.floor(x / 10) + 1;
+        shipImg.style.gridRow = Math.floor(ship.head / 10) + 1;
     }
-    const placeShip = (x, isVertical, ship) => {
+    const placeShip = (ship) => {
         const shipImg = document.querySelector(`.${ship.name}`);
         const shipLabel = shipImg.nextElementSibling;
         shipLabel.remove();
-        positionImg(shipImg, x, isVertical, ship);
+        positionImg(shipImg, ship, document.querySelector('.field'));
     }
 
     const renderShipImg = (ship) => {
@@ -96,6 +95,7 @@ const shipyard = (() => {
         const container = newYard.lastElementChild;
         fleet.forEach(ship => {
             const newSpan = document.createElement('span');
+            newSpan.classList.add(ship.name)
             newSpan.innerText = ship.name[0].toUpperCase() + ship.name.slice(1) + ` (${ship.length})`;
             newSpan.style.width = `${(ship.length * 2) + 3}rem`;
             container.appendChild((newSpan));
