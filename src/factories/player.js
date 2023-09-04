@@ -3,6 +3,7 @@ import { Ship } from './ship.js';
 
 const Player = () => {
     return {
+        isAI: null,
         name: '',
         board: Gameboard(),
         fleet: [],
@@ -20,8 +21,9 @@ const Player = () => {
                 this.fleet.push(newShip);
             });
         },
-        initialize(nameInput) {
-            if (nameInput) this.name = nameInput;
+        initialize(nameInput, isAI) {
+            this.isAI = isAI;
+            this.name = nameInput;
             this.board.newField();
             this.newFleet();
         },

@@ -4,15 +4,17 @@ import { lobby } from './lobby.js';
 const view = (() => {
     const loadSetup = () => {
         const game = Game();
-        game.setPlayers(document.querySelector('.name-input').value);
-        document.querySelector('.content').replaceChildren();
-        lobby.renderSetup(game.p1);
-        lobby.addListeners(game);
+        const p1CharIndex = document.querySelector('.char-select img').dataset.index;
+        game.setPlayers(document.querySelector('.name-input').value, Number(p1CharIndex));
+        lobby.renderSetup(game);
     }
 
     const loadLobby = () => {
         lobby.renderLobby();
-        document.querySelector('.startBtn').addEventListener('click', loadSetup);
+        document.querySelector('.startBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            loadSetup();
+        });
     }
     return { loadLobby };
 })();

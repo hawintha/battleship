@@ -12,13 +12,13 @@ const shipyard = (() => {
             newCard.classList.add("ship-wrapper");
 
             const newImg = document.createElement('img');
-            newImg.setAttribute('src', `../src/assets/${ship.name}.svg`);
+            newImg.setAttribute('src', `./assets/${ship.name}.svg`);
             newImg.classList.add(ship.name);
             newCard.appendChild(newImg);
 
             const newLabel = document.createElement('span');
             newCard.appendChild(newLabel);
-            newLabel.innerText = ship.name;
+            newLabel.innerText = ship.name[0].toUpperCase() + ship.name.slice(1) + ` (${ship.length})`;
             newContainer.appendChild(newCard);
         });
         return newContainer;
@@ -63,7 +63,7 @@ const shipyard = (() => {
 
     const renderShipImg = (ship) => {
         const newImg = document.createElement('img');
-        newImg.setAttribute('src', `../src/assets/${ship.name}.svg`);
+        newImg.setAttribute('src', `./assets/${ship.name}.svg`);
         newImg.classList.add(ship.name);
         newImg.style.width = `${ship.length * 2.5}rem`;
         return newImg;

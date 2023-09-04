@@ -73,6 +73,12 @@ const Gameboard = () => {
             } else {
                 this.locations[x].isShot = "missed"; //Record missed shots on gameboard
             }
+        },
+
+        reset() {
+            this.activeShips = 0;
+            this.locations = [];
+            this.newField();
         }
     }
 }

@@ -4,9 +4,9 @@ let p1;
 let AI;
 beforeEach(() => {
     p1 = Player();
-    p1.initialize("Jack Sparrow");
+    p1.initialize("", 3);
     AI = Player();
-    AI.initialize("AI");
+    AI.initialize("", 2);
 })
 
 test('Initialize a game with 2 boards & their corresponding fleets', () => {

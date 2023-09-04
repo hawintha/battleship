@@ -1,28 +1,58 @@
 import { shipyard } from './shipyard.js';
 import { battlefield } from './battlefield.js';
+import { characters } from './characters.js';
 
 const lobby = (() => {
     const content = document.querySelector('.content');
 
+    const renderTitle = (type) => {
+        const newSpan = document.createElement('span');
+        newSpan.innerText = "Battleship";
+        newSpan.classList = type;
+        return newSpan;
+    }
+    const renderForm = () => {
+        const newForm = document.createElement('form');
+
+        const newHeading = document.createElement('h2');
+        newHeading.innerText = "Character Selection";
+        newForm.appendChild(newHeading);
+
+        newForm.appendChild(characters.renderCharSelect());
+
+        const newWrapper = document.createElement('div');
+        newWrapper.classList.add("name-input-wrapper")
+        const newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.placeholder = "Phantom";
+        newInput.classList.add("name-input");
+        newWrapper.appendChild(newInput);
+        const newBorder = document.createElement('span');
+        newBorder.classList.add("input-border");
+        newWrapper.appendChild(newBorder);
+        newForm.appendChild(newWrapper);
+
+        const newBtn = document.createElement('button');
+        newBtn.innerText = "START";
+        newBtn.classList.add("startBtn");
+        newForm.appendChild(newBtn);
+        return newForm;
+    }
     const renderLobby = () => {
         const newSection = document.createElement('section');
         newSection.classList.add("lobby");
         content.appendChild(newSection);
 
-        const newTitle = document.createElement('h1');
-        newTitle.innerText = "Battleship";
+        const newTitle = document.createElement('div');
+        newTitle.classList = "title"
+        newTitle.appendChild(renderTitle('bg'));
+        newTitle.appendChild(renderTitle('fg'));
         newSection.appendChild(newTitle);
 
-        const newInput = document.createElement('input');
-        newInput.type = 'text';
-        newInput.placeholder = "Captain's Name";
-        newInput.classList.add("name-input");
-        newSection.appendChild(newInput);
-
-        const newBtn = document.createElement('button');
-        newBtn.innerText = "Start";
-        newBtn.classList.add("startBtn");
-        newSection.appendChild(newBtn);
+        newSection.appendChild(renderForm());
+        document.querySelectorAll('.arrow').forEach(arrow => {
+            arrow.addEventListener('click', () => characters.changeChar(arrow));
+        });
     }
 
     const renderLabels = (characters) => {
@@ -59,7 +89,7 @@ const lobby = (() => {
     const renderControls = () => {
         const newContainer = document.createElement('div');
         newContainer.classList.add("controls");
-        const btns = ['Reset', 'Randomize', 'Confirm', 'Horizontal', 'Vertical'];
+        const btns = ['Reset', 'Random', 'Confirm', 'Vertical'];
         btns.forEach(btn => {
             const newBtn = document.createElement('button');
             newBtn.innerText = btn;
@@ -70,7 +100,7 @@ const lobby = (() => {
     }
     const renderBoard = (heading) => {
         const newBoard = document.createElement('div');
-        newBoard.classList.add("board", heading.substring(0, heading.length - 7).toLowerCase());
+        newBoard.classList.add("board", heading.toLowerCase().slice(0, -7));
         const newHeading = document.createElement('h2');
         newHeading.innerText = heading;
         newBoard.appendChild(newHeading);
@@ -81,30 +111,51 @@ const lobby = (() => {
         newBoard.appendChild(renderField());
         return newBoard;
     }
-    const renderSetup = (p1) => {
+    const renderSetup = (game) => {
         const newSection = document.createElement('section');
-        newSection.classList.add("setup");
-        content.appendChild(newSection);
-        newSection.appendChild(renderBoard("My Fleet"));
-        document.querySelector('.board').appendChild(renderControls());
-        document.querySelector('.confirm').disabled = true;
+        newSection.classList.add("pregame");
+        document.querySelector('.content').replaceChildren(newSection);
+        newSection.appendChild(characters.renderMsgBox("guide", game.p1.name.toLowerCase().replace(/\s/g, '')));
 
-        newSection.appendChild(shipyard.renderWharf(p1.fleet));
+        const newContainer = document.createElement('div');
+        newContainer.classList.add("setup");
+        newSection.appendChild(newContainer);
+        newContainer.appendChild(renderBoard("My Fleet"));
+        newContainer.appendChild(shipyard.renderWharf(game.p1.fleet));
+
+        newSection.appendChild(renderControls());
+        document.querySelector('.confirm').disabled = true;
+        addListeners(game);
     }
 
+    const resetSetup = (p1) => {
+        p1.board.reset();
+        const board = document.querySelector('.board');
+        board.replaceChild(renderField(), document.querySelector('.field')); //New field
+        const setup = document.querySelector('.setup');
+        setup.replaceChild(shipyard.renderWharf(p1.fleet), document.querySelector('.wharf')); //Return wharf images
+    }
     const addListeners = (game) => {
-        const randomizeBtn = document.querySelector('.randomize');
+        const resetBtn = document.querySelector('.reset');
+        resetBtn.addEventListener('click', () => {
+            resetSetup(game.p1);
+        });
+
+        const randomizeBtn = document.querySelector('.random');
         const confirmBtn = document.querySelector('.confirm');
         randomizeBtn.addEventListener('click', () => {
+            if (!(document.querySelector('.ship-wrapper').firstElementChild)) {//If Random Btn was clicked again, reset first before randomizing again
+                resetSetup(game.p1);
+            }
             game.p1.fleet.forEach(ship => {
                 game.p1.board.autoPlace(ship, false);
-            })
-            game.p2.fleet.forEach(ship => { //Auto place AI ships, but not on DOM
-                game.p2.board.autoPlace(ship, true);
             })
             confirmBtn.disabled = false;
         });
         confirmBtn.addEventListener('click', () => {
+            game.p2.fleet.forEach(ship => { //Auto place AI ships, but not on DOM
+                game.p2.board.autoPlace(ship, true);
+            })
             battlefield.renderBattlefield(game);
         });
     }
