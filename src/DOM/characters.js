@@ -31,7 +31,8 @@ const characters = (() => {
             else current--;
         }
         const input = document.querySelector('.name-input');
-        input.placeholder = chars[current][0].toUpperCase() + chars[current].slice(1); //Default char name
+        input.placeholder = chars[current][0].toUpperCase() + chars[current].slice(1); //Default char name placeholder
+        input.value = chars[current][0].toUpperCase() + chars[current].slice(1); //Default char name value
         renderChar(document.querySelector('.char-select img'), current);
     }
 

@@ -54,11 +54,19 @@ const shipyard = (() => {
         shipImg.style.gridColumnEnd = columnStart + ship.length;
         shipImg.style.gridRow = Math.floor(ship.head / 10) + 1;
     }
+    const checkCompletion = () => {
+        const unplacedShips = document.querySelectorAll('.wharf img');
+        const confirmBtn = document.querySelector('.confirm');
+        if (unplacedShips.length === 0) { //If all ships have been placed
+            confirmBtn.disabled = false; //Allow game to proceed
+        }
+    }
     const placeShip = (ship) => {
         const shipImg = document.querySelector(`.${ship.name}`);
         const shipLabel = shipImg.nextElementSibling;
         shipLabel.remove();
         positionImg(shipImg, ship, document.querySelector('.field'));
+        checkCompletion(); //Check if all ships have been placed
     }
 
     const renderShipImg = (ship) => {

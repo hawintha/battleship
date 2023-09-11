@@ -12,9 +12,8 @@ const Game = () => {
             if (RNG === p1Index) return this.getRandomEnemy(p1Index);
             else return this.chars[RNG];
         },
-        setPlayers(nameInput, p1CharIndex) {
-            if (!nameInput) this.p1.initialize(this.chars[p1CharIndex], false); //If no custom name, use default char's name
-            else this.p1.initialize(nameInput, false);// Else use user-inputted name
+        setPlayers(p1CharIndex) {
+            this.p1.initialize(this.chars[p1CharIndex], false);
             this.p2.initialize(this.getRandomEnemy(p1CharIndex), true);
         }
     }

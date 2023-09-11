@@ -5,7 +5,7 @@ const view = (() => {
     const loadSetup = () => {
         const game = Game();
         const p1CharIndex = document.querySelector('.char-select img').dataset.index;
-        game.setPlayers(document.querySelector('.name-input').value, Number(p1CharIndex));
+        game.setPlayers(Number(p1CharIndex));
         lobby.renderSetup(game);
     }
 

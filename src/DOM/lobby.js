@@ -1,6 +1,8 @@
+import { characters } from './characters.js';
+import { dragDrop } from './drag-drop.js';
 import { shipyard } from './shipyard.js';
 import { battlefield } from './battlefield.js';
-import { characters } from './characters.js';
+
 
 const lobby = (() => {
     const content = document.querySelector('.content');
@@ -25,6 +27,7 @@ const lobby = (() => {
         const newInput = document.createElement('input');
         newInput.type = 'text';
         newInput.placeholder = "Phantom";
+        newInput.value = "Phantom";
         newInput.classList.add("name-input");
         newWrapper.appendChild(newInput);
         const newBorder = document.createElement('span');
@@ -89,11 +92,17 @@ const lobby = (() => {
     const renderControls = () => {
         const newContainer = document.createElement('div');
         newContainer.classList.add("controls");
-        const btns = ['Reset', 'Random', 'Confirm', 'Vertical'];
+        const btns = ["Reset", "Random", "Confirm", "Vertical", "Horizontal"];
         btns.forEach(btn => {
             const newBtn = document.createElement('button');
             newBtn.innerText = btn;
             newBtn.classList.add(btn.toLowerCase());
+            if (btn === "Vertical" || btn === "Horizontal") {
+                newBtn.classList.add("orientation");
+            }
+            if (btn === "Confirm" || btn === "Horizontal") {
+                newBtn.disabled = true;
+            }
             newContainer.appendChild(newBtn);
         });
         return newContainer;
@@ -124,29 +133,35 @@ const lobby = (() => {
         newContainer.appendChild(shipyard.renderWharf(game.p1.fleet));
 
         newSection.appendChild(renderControls());
-        document.querySelector('.confirm').disabled = true;
+        document.querySelector('.horizontal').classList.add("on");
         addListeners(game);
     }
 
-    const resetSetup = (p1) => {
-        p1.board.reset();
-        const board = document.querySelector('.board');
-        board.replaceChild(renderField(), document.querySelector('.field')); //New field
+    const resetSetup = (game) => {
+        game.p1.board.reset();
+        const gameboard = document.querySelector('.board');
+        gameboard.replaceChild(renderField(), document.querySelector('.field')); //New field
         const setup = document.querySelector('.setup');
-        setup.replaceChild(shipyard.renderWharf(p1.fleet), document.querySelector('.wharf')); //Return wharf images
+        setup.replaceChild(shipyard.renderWharf(game.p1.fleet), document.querySelector('.wharf')); //Return wharf images
+        dragDrop.addListeners(game);
+    }
+    const toggleBtns = (clickedBtn, oppositeBtn) => {
+        clickedBtn.classList.add("on");
+        oppositeBtn.classList.remove("on");
+        clickedBtn.disabled = true;
+        oppositeBtn.disabled = false;
     }
     const addListeners = (game) => {
         const resetBtn = document.querySelector('.reset');
-        resetBtn.addEventListener('click', () => {
-            resetSetup(game.p1);
-        });
-
         const randomizeBtn = document.querySelector('.random');
         const confirmBtn = document.querySelector('.confirm');
+        const orientationBtns = document.querySelectorAll('.orientation');
+        resetBtn.addEventListener('click', () => {
+            resetSetup(game);
+            confirmBtn.disabled = true;
+        });
         randomizeBtn.addEventListener('click', () => {
-            if (!(document.querySelector('.ship-wrapper').firstElementChild)) {//If Random Btn was clicked again, reset first before randomizing again
-                resetSetup(game.p1);
-            }
+            resetSetup(game); // Reset first before randomizing again
             game.p1.fleet.forEach(ship => {
                 game.p1.board.autoPlace(ship, false);
             })
@@ -158,6 +173,12 @@ const lobby = (() => {
             })
             battlefield.renderBattlefield(game);
         });
+        orientationBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                toggleBtns(btn, document.querySelector('.on'))
+            });
+        });
+        dragDrop.addListeners(game);
     }
     return { renderLobby, renderBoard, renderSetup, addListeners }
 })();
