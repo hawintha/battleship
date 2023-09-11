@@ -151,6 +151,15 @@ button {
     letter-spacing: 2px;
 }
 
+button:disabled {
+    color: #6A859F;
+    cursor: default;
+}
+
+.on {
+    background: linear-gradient(to bottom, #BADAF0 0%, #BAD0E5 26%, #95B0C5 100%);
+}
+
 button:enabled:hover {
     background: linear-gradient(to bottom, #BADAF0 0%, #BAD0E5 26%, #95B0C5 100%);
 }
@@ -257,6 +266,15 @@ p {
     background-color: rgb(255 255 255 / 25%);
 }
 
+.field .valid-drag {
+    background-color: rgba(0, 0, 0, 0.25);
+    background-color: rgba(31, 90, 117, 0.25);
+}
+
+.field .invalid-drag {
+    background-color: rgba(207, 79, 111, 0.25);
+}
+
 .wharf {
     display: grid;
     text-align: center;
@@ -280,20 +298,20 @@ p {
 
 .wharf img {
     transform: scale(0.25);
+    cursor: grab;
 }
 
 .controls {
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     width: 100%;
 }
 
 .controls button {
-    margin-left: 1rem;
     font-size: 20px;
     height: 40px;
     line-height: 40px;
-    padding: 0 20px;
+    padding: 0 15px;
     text-shadow: 0 -1px 0 #3A709A, 0 1px 1px #C0D0DF;
 }
 
@@ -345,6 +363,7 @@ p {
     width: 95%;
     max-height: 85%;
     justify-self: center;
+    pointer-events: none;
 }
 
 .yard {
