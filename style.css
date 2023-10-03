@@ -353,7 +353,7 @@ p {
     background-color: #CF4F6F;
 }
 
-.missed::after {
+.miss::after {
     background-color: #1F5A75;
 }
 
