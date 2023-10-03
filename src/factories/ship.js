@@ -4,12 +4,13 @@ const Ship = (l, name, isVertical) => {
         isVertical: isVertical,
         length: l,
         head: null,
-        hits: 0,
-        hit() {
-            this.hits++;
+        coordinates: [],
+        hits: [],
+        hit(index) {
+            this.hits.push(index);
         },
         hasSunk() {
-            return this.hits === this.length;
+            return this.hits.length === this.length;
         },
         setRandomAxis() {
             return this.isVertical = Math.random() < 0.5;

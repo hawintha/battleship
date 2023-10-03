@@ -8,7 +8,7 @@ const Player = () => {
         board: Gameboard(),
         fleet: [],
         newFleet() {
-            const ships = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer'];
+            const ships = ["carrier", "battleship", "cruiser", "submarine", "destroyer"];
             const shipLengths = {
                 carrier: 5,
                 battleship: 4,
@@ -31,15 +31,12 @@ const Player = () => {
         attack(x, enemyBoard) {
             return enemyBoard.receiveAttack(x);
         },
+
         autoAttack(enemyBoard) {
-            let RNG = Math.floor(Math.random() * 100);
-            if (enemyBoard.locations[RNG].isShot === false) {
-                enemyBoard.receiveAttack(RNG);
-            } else {
-                return this.autoAttack(enemyBoard); //Get different RNG
-            }
+            let RNG = this.board.getNextShot()
+            enemyBoard.receiveAttack(RNG);
             return RNG;
-        },
+        }
     }
 }
 export { Player };

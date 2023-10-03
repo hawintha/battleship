@@ -23,7 +23,7 @@ test('Player attacks enemy gameboard', () => {
     const destroyer = AI.fleet[4];
     AI.board.locations[4].occupied = destroyer;
     p1.attack(3, AI.board);
-    expect(AI.board.locations[3].isShot).toBe('missed');
+    expect(AI.board.locations[3].isShot).toBe('miss');
     p1.attack(4, AI.board);
     expect(AI.board.locations[4].isShot).toBe('hit');
 })

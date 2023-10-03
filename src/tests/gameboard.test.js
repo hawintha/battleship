@@ -56,7 +56,7 @@ test('Record & evaluate shots', () => {
     board.addShip(3, submarine);
     board.receiveAttack(2);
     board.receiveAttack(3);
-    expect(board.locations[2].isShot).toBe('missed');
+    expect(board.locations[2].isShot).toBe('miss');
     expect(board.locations[3].isShot).toBe('hit');
 })
 test('Report whether all ships have sunk', () => {
@@ -66,7 +66,7 @@ test('Report whether all ships have sunk', () => {
     expect(board.activeShips).toBe(1);
 
     board.receiveAttack(4);
-    expect(board.locations[4].occupied.hits).toBe(2);
+    expect(board.locations[4].occupied.hits[1]).toBe(4);
     expect(board.locations[4].occupied.hasSunk()).toBe(true);
     expect(board.activeShips).toBe(0);
 })

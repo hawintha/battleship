@@ -21,52 +21,67 @@ const battlefield = (() => {
             shipyardShip.classList.add("sunken"); //Fade ship in shipyard
         }
     }
-    const checkIfSunk = (enemy, i) => {
-        let ship = enemy.board.locations[i].occupied;
-        if (ship.hasSunk()) {
-            sinkShip(enemy, i);
-            return enemy.board.activeShips === 0 ? "win" : "sinks";
-        } else {
-            return "hits";
-        }
+    const checkShot = (oldNumShips, newNumShips) => { //Win, sinks, or hit
+        if (oldNumShips !== newNumShips) {
+            return newNumShips === 0 ? "win" : "sinks";
+        } else return "hit"; //Hit did not sink ship
     }
-    const checkShot = (shotType, enemy, i) => {
-        return shotType === "hit" ? checkIfSunk(enemy, i) : "miss";
-    }
-    const displayShot = (player, enemy, square) => {
-        let i = square.dataset.index;
-        let shotType = enemy.board.locations[i].isShot;
-        square.classList.add("shot", shotType); //Blue dot for missed, red dot for hit
-        let status = checkShot(shotType, enemy, i);
-        characters.changeMsg(player.isAI, player.name.toLowerCase().replace(/\s/g, ''), enemy.name.toLowerCase().replace(/\s/g, ''), status);
-        if (status === "win") {
+    const updateMsg = (shotType, player, enemy) => {
+        characters.changeMsg(player.isAI, player.name.toLowerCase().replace(/\s/g, ''), enemy.name.toLowerCase().replace(/\s/g, ''), shotType);
+        if (shotType === "win") {
             characters.changeMsg(enemy.isAI, enemy.name.toLowerCase().replace(/\s/g, ''), enemy.name.toLowerCase().replace(/\s/g, ''), "lose");
-            return "win";
         }
-    }
-    const p1Attack = (square, game) => {
-        return game.p1.attack(square.dataset.index, game.p2.board);
     }
     const p2Attack = (game) => {
-        let squareIndex = game.p2.autoAttack(game.p1.board);
-        let attackedSquare = document.querySelector('.friendly .field').children.item(squareIndex);
-        if (displayShot(game.p2, game.p1, attackedSquare) === "win") {
-            game.isOver = true; //Disable attack listener
-        }
-    }
-    const ctrlAtk = (e, game) => {
-        if (!game.isOver && p1Attack(e.target, game) !== "Already shot") { //Prevent P1 from attacking the same square
-            if (displayShot(game.p1, game.p2, e.target) !== "win") {
-                setTimeout(() => { p2Attack(game) }, 1500);
-            } else {
-                game.isOver = true;
+        let enemyShips = game.p1.board.activeShips;
+        let index = game.p2.autoAttack(game.p1.board);
+        let square = document.querySelector('.friendly .field').children.item(index);
+        let shotType = game.p1.board.locations[index].isShot; //Hit or miss
+        square.classList.add("shot", shotType); //Blue dot for miss, red dot for hit
+
+        if (shotType === "hit") {
+            game.p2.board.hitsToSearch.push(index);
+            game.p2.board.hitsToSearch.sort((a, b) => a - b); //Put hits in ascending order
+            shotType = checkShot(enemyShips, game.p1.board.activeShips);
+            if (shotType === "sinks") {
+                let ship = game.p1.board.locations[index].occupied;
+                game.p2.board.hitsToSearch = game.p2.board.hitsToSearch.filter((hit) => {
+                    return !ship.coordinates.includes(hit); //Filter out sunk shots from the search queue
+                })
+                sinkShip(game.p1, index);
+            } else if (shotType === "win") {
+                game.isOver = true; //End game
             }
         }
+        updateMsg(shotType, game.p2, game.p1);
+    }
+    const ctrlAtk = (e, game) => {
+        let square = e.target;
+        let index = square.dataset.index
+        let enemyShips = game.p2.board.activeShips;
+        game.p1.attack(index, game.p2.board);
+        let shotType = game.p2.board.locations[index].isShot; //Hit or miss
+        square.classList.add("shot", shotType); //Blue dot for miss, red dot for hit
+        if (shotType === "hit") {
+            shotType = checkShot(enemyShips, game.p2.board.activeShips); //Sink or win or hit
+            if (shotType !== "hit") { //Sink or win
+                sinkShip(game.p2, index);
+                if (shotType === "win") {
+                    game.isOver = true; //End game
+                }
+            }
+        }
+        if (!game.isOver) setTimeout(() => { p2Attack(game) }, 1500); //If p1 didn't win, let AI attack
+        updateMsg(shotType, game.p1, game.p2);
     }
     const addAttackListener = (game) => {
         const enemySquares = document.querySelectorAll('.enemy .field div');
         for (let square of enemySquares) {
-            square.addEventListener('click', (e) => ctrlAtk(e, game))
+            square.addEventListener('click', (e) => {
+                if (!game.isOver && !e.target.classList.contains("shot")) { //Prevent P1 from attacking the same square
+                    ctrlAtk(e, game);
+                }
+            })
         }
     }
     const renderBattlefield = (game) => {

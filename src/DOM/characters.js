@@ -40,7 +40,7 @@ const characters = (() => {
         guide: ["Captain, let's plan our formation."],
         start: ["Captain, all ships are ready for battle. Let's make our first move."],
         miss: ["Our aim needs work, Captain."],
-        hits: ["Enemy spotted!"],
+        hit: ["Enemy spotted!"],
         sinks: ["Captain! We've sunk the enemy ship!"],
         win: ["Mission accomplished! That was a breeze."],
         lose: ["Mission failed."],
@@ -48,7 +48,7 @@ const characters = (() => {
     const p2Messages = {
         start: ["I'll show you no mercy."],
         miss: ["You can't hide forever."],
-        hits: ["Take that!"],
+        hit: ["Take that!"],
         sinks: ["Rest in peace!"],
         gotHit: ["Ugh"],
         sunk: ["You'll pay for that!"],
